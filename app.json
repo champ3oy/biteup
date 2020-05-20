@@ -1,0 +1,17 @@
+{
+  "name": "take-a-break",
+  "displayName": "take-a-break",
+  "expo": {
+    "name": "take-a-break",
+    "slug": "expo-template-bare",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
