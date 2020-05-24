@@ -1,8 +1,8 @@
 {
-  "name": "take-a-break",
-  "displayName": "take-a-break",
+  "name": "upBite",
+  "displayName": "upBite",
   "expo": {
-    "name": "take-a-break",
+    "name": "upBite",
     "slug": "expo-template-bare",
     "version": "1.0.0",
     "platforms": [

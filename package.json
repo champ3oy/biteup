@@ -8,17 +8,27 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.4.2",
+    "@react-navigation/stack": "^5.3.9",
     "expo": "~37.0.3",
+    "expo-font": "^8.1.1",
     "expo-splash-screen": "^0.2.3",
     "expo-updates": "~0.2.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "~0.61.5",
-    "react-native-gesture-handler": "~1.6.0",
+    "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "~1.7.0",
+    "react-native-safe-area-context": "^1.0.2",
     "react-native-screens": "~2.2.0",
+    "react-native-scroll-bottom-sheet": "^0.6.0",
+    "react-native-snap-carousel": "^3.9.0",
+    "react-native-svg": "^12.1.0",
     "react-native-unimodules": "~0.9.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "react-navigation": "^4.3.9",
+    "react-navigation-transitions": "^1.0.12"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
