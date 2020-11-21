@@ -6506,6 +6506,13 @@ rimraf@~2.2.6:
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
 
+rn-awesome-loader@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/rn-awesome-loader/-/rn-awesome-loader-1.0.5.tgz#f0441d8cfe4d408d2032b87ab4bcf3f7e29e9283"
+  integrity sha512-s+we+dWHVdO0PfZngvLIHKBGPNkiIRrj9ADPxf6eSZvBEEdxFh7FF34JU/L3jUZAbMQJub/Qa9LXiPfBiEbYuA==
+  dependencies:
+    react-native-svg "^12.1.0"
+
 rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"

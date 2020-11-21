@@ -13,34 +13,28 @@ import {
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import PrimaryButton from "../Components/PrimaryButton";
+import PrimaryInput from "../Components/PrimaryInput";
 
 const { width, height } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
 let StatusBar = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
+import GLOBAL from "./Global";
+
 export default class Payment extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      method: {},
+      momoNumber: "",
+      paymentDetails: {},
+      addressL1: "",
+      addressL2: "",
+      order: [],
+    };
   }
 
   render() {
-    let Menu = [
-      {
-        id: 1,
-        image: require("../images/restaurants/15.jpg"),
-        name: "Sweet Donut",
-        tag: "Western cuisine, Fast Food, burger",
-        price: "20.00",
-      },
-      {
-        id: 2,
-        image: require("../images/restaurants/16.jpg"),
-        name: "Star French Fries",
-        tag: "Western cuisine, Fast Food, burger",
-        price: "25.00",
-      },
-    ];
     return (
       <View style={styles.container}>
         <View
@@ -74,10 +68,12 @@ export default class Payment extends React.Component {
             </Text>
           </View>
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ width: width, paddingHorizontal: 20 }}>
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("Cart")}
+              onPress={() =>
+                this.setState({ method: { type: "CASH_ON_DELIVERY" } })
+              }
               style={[
                 styles.continueButton,
                 {
@@ -95,26 +91,40 @@ export default class Payment extends React.Component {
               >
                 Cash
               </Text>
-              <View
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 30,
-                  borderWidth: 1.5,
-                  borderColor: "#fb4e4e",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              {this.state.method.type == "CASH_ON_DELIVERY" ? (
                 <View
                   style={{
-                    width: 22,
-                    height: 22,
+                    width: 30,
+                    height: 30,
                     borderRadius: 30,
-                    backgroundColor: "#fb4e4e",
+                    borderWidth: 1.5,
+                    borderColor: "#fb4e4e",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: 30,
+                      backgroundColor: "#fb4e4e",
+                    }}
+                  />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 30,
+                    borderWidth: 1.5,
+                    borderColor: "#A0A4A8",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 />
-              </View>
+              )}
             </TouchableOpacity>
           </View>
           <View
@@ -133,7 +143,9 @@ export default class Payment extends React.Component {
               }}
             >
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Cart")}
+                onPress={() =>
+                  this.setState({ method: { type: "CARD_OR_MOMO" } })
+                }
                 style={[
                   styles.continueButton,
                   {
@@ -149,31 +161,53 @@ export default class Payment extends React.Component {
                     fontWeight: "bold",
                   }}
                 >
-                  Card / MoMo
+                  Mobile Money
                 </Text>
-                <View
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 30,
-                    borderWidth: 1.5,
-                    borderColor: "#a0a4a8",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
+                {this.state.method.type == "CARD_OR_MOMO" ? (
                   <View
                     style={{
-                      width: 22,
-                      height: 22,
+                      width: 30,
+                      height: 30,
                       borderRadius: 30,
-                      backgroundColor: "white",
+                      borderWidth: 1.5,
+                      borderColor: "#fb4e4e",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 22,
+                        height: 22,
+                        borderRadius: 30,
+                        backgroundColor: "#fb4e4e",
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: 30,
+                      borderWidth: 1.5,
+                      borderColor: "#A0A4A8",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   />
-                </View>
+                )}
               </TouchableOpacity>
-              <SafeAreaView style={{ marginLeft: 20, height: 350 }}>
+
+              <View style={[styles.continueButton2, { marginTop: -1 }]}>
+                <PrimaryInput
+                  onTextChange={(val) => this.setState({ momoNumber: val })}
+                  placeholder="MoMo number"
+                />
+              </View>
+              {/* <SafeAreaView style={{ marginLeft: 20, height: 350 }}>
                 <FlatList
+                  showsHorizontalScrollIndicator={false}
                   data={[{ id: 1 }, { id: 2 }]}
                   horizontal={true}
                   renderItem={({ item }) => (
@@ -253,8 +287,8 @@ export default class Payment extends React.Component {
                   )}
                   keyExtractor={(item) => item.id}
                 />
-              </SafeAreaView>
-              <View
+              </SafeAreaView> */}
+              {/* <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -273,13 +307,99 @@ export default class Payment extends React.Component {
                 >
                   Add a new card
                 </Text>
+              </View> */}
+            </View>
+          </View>
+
+          <View
+            style={{
+              width: width,
+              paddingHorizontal: 20,
+              marginTop: 15,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                width: "100%",
+                borderRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => alert("get location")}
+                style={[
+                  styles.continueButton,
+                  {
+                    backgroundColor: "white",
+                    marginTop: 3,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: "#52575c",
+                    fontSize: 18,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Delivery Address
+                </Text>
+                <Feather name="map-pin" size={25} color="#a0a4a8" />
+              </TouchableOpacity>
+
+              <View style={[styles.continueButton2, { marginTop: -1 }]}>
+                <PrimaryInput
+                  onTextChange={(val) => this.setState({ addressL1: val })}
+                  placeholder="Address line 1"
+                />
+              </View>
+              <View
+                style={[
+                  styles.continueButton2,
+                  { marginTop: -1, marginBottom: 10 },
+                ]}
+              >
+                <PrimaryInput
+                  onTextChange={(val) => this.setState({ addressL2: val })}
+                  placeholder="Address line 2"
+                />
               </View>
             </View>
           </View>
 
           <View style={{ width: width, paddingHorizontal: 20 }}>
             <PrimaryButton
-              onPress={() => this.props.navigation.navigate("HomeScreen")}
+              onPress={async () => {
+                await this.setState({
+                  paymentDetails: {
+                    method: this.state.method.type,
+                    momoNumber: this.state.momoNumber,
+                    address: {
+                      line1: this.state.addressL1,
+                      line2: this.state.addressL2,
+                    },
+                    orderDetails: GLOBAL.cart.state.cart,
+                  },
+                });
+
+                GLOBAL.cart.setState({
+                  paymentDetails: {
+                    method: this.state.method.type,
+                    momoNumber: this.state.momoNumber,
+                    address: {
+                      line1: this.state.addressL1,
+                      line2: this.state.addressL2,
+                    },
+                    orderDetails: [
+                      ...this.state.paymentDetails.orderDetails
+                    ],
+                  },
+                });
+
+                this.props.navigation.navigate("HomeScreen");
+              }}
               text="Done"
             />
           </View>
@@ -308,5 +428,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-  visa: {},
+  continueButton2: {
+    backgroundColor: "#fafafa",
+    width: "90%",
+    paddingVertical: 15,
+    borderRadius: 15,
+    marginVertical: 10,
+  },
 });

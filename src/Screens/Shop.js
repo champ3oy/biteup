@@ -20,6 +20,8 @@ import Rate from "../Components/Rating";
 import { TextInput } from "react-native-gesture-handler";
 import PrimaryButton from "../Components/PrimaryButton";
 
+import GLOBAL from "./Global";
+
 const { width, height } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
 let StatusBar = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
@@ -29,6 +31,12 @@ export default class Shop extends React.Component {
     super(props);
     this.state = {
       showModal: false,
+      qtyFood: 1,
+      selectedTypeIndex: 0,
+      buyersRequest: '',
+      favourite: false,
+      cart: [],
+      selectedItem: {},
     };
   }
 
@@ -49,6 +57,27 @@ export default class Shop extends React.Component {
         price: "25.00",
       },
     ];
+
+    let DailyDeals = [
+      {
+        id: 1,
+        image: require("../images/restaurants/15.jpg"),
+        name: "Sweet Donut",
+        tag: "Western cuisine, Fast Food, burger",
+        price: "20.00",
+      },
+      {
+        id: 2,
+        image: require("../images/restaurants/16.jpg"),
+        name: "Star French Fries",
+        tag: "Western cuisine, Fast Food, burger",
+        price: "25.00",
+      },
+    ];
+
+    let shop = this.props.route.params;
+
+    GLOBAL.cart = this;
 
     return (
       <View style={styles.container}>
@@ -76,7 +105,10 @@ export default class Shop extends React.Component {
           />
         </ImageBackground>
 
-        <ScrollView style={{ height: height }}>
+        <ScrollView
+          style={{ height: height }}
+          showsVerticalScrollIndicator={false}
+        >
           <View
             style={{
               flexDirection: "row",
@@ -121,7 +153,9 @@ export default class Shop extends React.Component {
                     marginRight: 2,
                   }}
                 >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>0</Text>
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    {this.state.cart.length}
+                  </Text>
                 </View>
                 <Feather color="white" size={15} name="shopping-cart" />
               </View>
@@ -178,10 +212,10 @@ export default class Shop extends React.Component {
               </View>
               <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                  Pizza Hut - Pizza Delivery
+                  {shop.name}
                 </Text>
                 <Text style={{ color: "#a0a4a8", fontSize: 12 }}>
-                  Western cuisine, Fast Food, burger
+                  {shop.tag}
                 </Text>
                 <View
                   style={{
@@ -224,6 +258,7 @@ export default class Shop extends React.Component {
                 }}
               >
                 <FlatList
+                  showsVerticalScrollIndicator={false}
                   data={[
                     { id: 1, type: "promo" },
                     { id: 2, type: "discount" },
@@ -309,9 +344,9 @@ export default class Shop extends React.Component {
               </Text>
               <View>
                 <FlatList
-                  showHorizontalSrollIndicator={false}
-                  data={[{ id: 1 }, { id: 2 }]}
+                  data={DailyDeals}
                   horizontal={true}
+                  showsHorizontalScrollIndicator={false}
                   renderItem={({ item }) => (
                     <View
                       style={{
@@ -331,7 +366,9 @@ export default class Shop extends React.Component {
                       >
                         <TouchableNativeFeedback
                           onPress={() => {
+                            GLOBAL.cart.setState({ selectedItem: item });
                             this.setState({ showModal: true });
+                            console.log(this.state.selectedItem);
                           }}
                         >
                           <View>
@@ -343,7 +380,7 @@ export default class Shop extends React.Component {
                                   color: "#25282b",
                                 }}
                               >
-                                Happy Combo Burger
+                                {item.name}
                               </Text>
                             </View>
                             <View style={{ marginVertical: 8 }}>
@@ -357,7 +394,7 @@ export default class Shop extends React.Component {
                                   color: "#fb4e4e",
                                 }}
                               >
-                                &cent; 25.00
+                                &cent; {item.price}
                               </Text>
                             </View>
                             <View
@@ -376,25 +413,45 @@ export default class Shop extends React.Component {
                             </View>
                           </View>
                         </TouchableNativeFeedback>
-                        <View
-                          style={{
-                            backgroundColor: "#fb4e4e",
-                            width: 40,
-                            height: 40,
-                            borderRadius: 12,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginRight: 10,
-                            marginTop: -30,
+                        <TouchableOpacity
+                          style={{ padding: 10, marginTop: -30 }}
+                          onPress={() => {
+                            GLOBAL.cart.setState({
+                              cart: [
+                                ...this.state.cart,
+                                {
+                                  id: item.id,
+                                  name: item.name,
+                                  tag: item.tag,
+                                  price: item.price,
+                                  image: require("../images/restaurants/15.jpg"),
+                                  qty: 1,
+                                  typeorSize: "normal",
+                                },
+                              ],
+                            });
                           }}
                         >
-                          <Feather
-                            color="white"
-                            style={{ marginRight: 0 }}
-                            size={25}
-                            name="plus"
-                          />
-                        </View>
+                          <View
+                            style={{
+                              backgroundColor: "#fb4e4e",
+                              width: 40,
+                              height: 40,
+                              borderRadius: 12,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              marginRight: 10,
+                              // marginTop: -30,
+                            }}
+                          >
+                            <Feather
+                              color="white"
+                              style={{ marginRight: 0 }}
+                              size={25}
+                              name="plus"
+                            />
+                          </View>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   )}
@@ -410,6 +467,7 @@ export default class Shop extends React.Component {
                 }}
               >
                 <FlatList
+                  showsVerticalScrollIndicator={false}
                   data={Menu}
                   renderItem={({ item }) => (
                     <>
@@ -441,7 +499,9 @@ export default class Shop extends React.Component {
                         <View style={{ marginTop: 8 }}>
                           <TouchableNativeFeedback
                             onPress={() => {
+                              GLOBAL.cart.setState({ selectedItem: item });
                               this.setState({ showModal: true });
+                              console.log(this.state.selectedItem);
                             }}
                           >
                             <View>
@@ -477,7 +537,23 @@ export default class Shop extends React.Component {
                             >
                               &cent; {item.price}
                             </Text>
-                            <View
+                            <TouchableOpacity
+                              onPress={() => {
+                                GLOBAL.cart.setState({
+                                  cart: [
+                                    ...this.state.cart,
+                                    {
+                                      id: item.id,
+                                      name: item.name,
+                                      tag: item.tag,
+                                      price: item.price,
+                                      image: require("../images/restaurants/15.jpg"),
+                                      qty: 1,
+                                      typeorSize: "normal",
+                                    },
+                                  ],
+                                });
+                              }}
                               style={{
                                 backgroundColor: "#fb4e4e",
                                 width: 30,
@@ -494,7 +570,7 @@ export default class Shop extends React.Component {
                                 size={15}
                                 name="plus"
                               />
-                            </View>
+                            </TouchableOpacity>
                           </View>
                         </View>
                       </View>
@@ -541,7 +617,7 @@ export default class Shop extends React.Component {
                     }}
                   >
                     <Text style={{ color: "white", fontWeight: "bold" }}>
-                      0
+                      {this.state.cart.length}
                     </Text>
                   </View>
                   <Feather color="white" size={20} name="shopping-cart" />
@@ -563,8 +639,6 @@ export default class Shop extends React.Component {
               alignItems: "center",
               justifyContent: "flex-end",
               flex: 1,
-              //   borderTopRightRadius: 20,
-              //   borderTopLeftRadius: 20,
             }}
           >
             <TouchableOpacity
@@ -573,23 +647,33 @@ export default class Shop extends React.Component {
                 flex: 1,
               }}
               onPress={() => this.setState({ showModal: false })}
-            ></TouchableOpacity>
+            />
             <View
               style={{
                 backgroundColor: "white",
                 width: width - 10,
-                // height: 300,
                 borderTopRightRadius: 30,
                 borderTopLeftRadius: 30,
                 padding: 15,
               }}
             >
-              <Feather
-                color="#a0a4a8"
-                style={{ position: "absolute", top: 20, right: 20 }}
-                size={25}
-                name="heart"
-              />
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  padding: 10,
+                }}
+                onPress={() => this.setState({ favourite: true })}
+              >
+                <Ionicons
+                  style={{
+                    color: this.state.favourite ? "#fb4e4e" : "#a0a4a8",
+                  }}
+                  size={30}
+                  name="ios-heart"
+                />
+              </TouchableOpacity>
               <Image
                 source={require("../images/burger.png")}
                 style={{
@@ -615,7 +699,7 @@ export default class Shop extends React.Component {
                     color: "#525752",
                   }}
                 >
-                  BBQ Bacon Cheese Burger
+                  {GLOBAL.cart.state.selectedItem.name}
                 </Text>
                 <Text style={{ fontSize: 20, color: "#525752" }}>
                   &cent; 25.99
@@ -635,37 +719,51 @@ export default class Shop extends React.Component {
                     flexDirection: "row",
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.state.qtyFood > 1
+                        ? this.setState({ qtyFood: this.state.qtyFood - 1 })
+                        : null
+                    }
                     style={{
-                      backgroundColor: "#fb4e4e",
+                      backgroundColor:
+                        this.state.qtyFood > 1 ? "#fb4e4e" : "white",
                       width: 40,
                       height: 40,
                       borderRadius: 10,
                       justifyContent: "center",
                       alignItems: "center",
+                      borderWidth: this.state.qtyFood > 1 ? 0 : 1,
+                      borderColor: "#a0a4a8",
                     }}
                   >
                     <Feather
-                      color="white"
+                      color={this.state.qtyFood > 1 ? "white" : "#fb4e4e"}
                       style={{ marginRight: 0 }}
                       size={15}
                       name="minus"
                     />
-                  </View>
-                  <TextInput
-                    defaultValue="1"
+                  </TouchableOpacity>
+                  <Text
                     style={{
-                      width: 40,
+                      // width: 40,
+                      height: 40,
                       fontSize: 40,
                       fontSize: 20,
                       fontWeight: "bold",
                       justifyContent: "center",
                       alignItems: "center",
                       paddingHorizontal: 15,
+                      marginTop: 10,
                     }}
-                  />
+                  >
+                    {this.state.qtyFood}
+                  </Text>
 
-                  <View
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.setState({ qtyFood: this.state.qtyFood + 1 })
+                    }
                     style={{
                       backgroundColor: "#fb4e4e",
                       width: 40,
@@ -681,7 +779,7 @@ export default class Shop extends React.Component {
                       size={15}
                       name="plus"
                     />
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
               <View
@@ -698,21 +796,43 @@ export default class Shop extends React.Component {
                     horizontal
                     ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
                     data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
-                    renderItem={({ item }) => (
-                      <View
+                    renderItem={({ item, index }) => (
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setState({
+                            selectedTypeIndex: index,
+                          });
+                        }}
                         style={{
-                          backgroundColor: "#fb4e4e",
+                          backgroundColor:
+                            this.state.selectedTypeIndex == index
+                              ? "#fb4e4e"
+                              : "white",
                           width: 40,
                           height: 40,
                           borderRadius: 10,
                           justifyContent: "center",
                           alignItems: "center",
+                          borderWidth:
+                            this.state.selectedTypeIndex == index ? 0 : 1,
+                          borderColor:
+                            this.state.selectedTypeIndex == index
+                              ? "white"
+                              : "#a0a4a8",
                         }}
                       >
-                        <Text style={{ fontWeight: "bold", color: "white" }}>
-                          12"
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            color:
+                              this.state.selectedTypeIndex == index
+                                ? "white"
+                                : "#fb4e4e",
+                          }}
+                        >
+                          {item.id}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     )}
                     keyExtractor={(item) => item.id}
                   />
@@ -737,6 +857,10 @@ export default class Shop extends React.Component {
                   }}
                 >
                   <TextInput
+                    onTextChange={(text) =>
+                      this.setState({ buyersRequest: text })
+                    }
+                    value={this.state.buyersRequest}
                     style={{
                       height: 25,
                       paddingHorizontal: 15,
@@ -748,7 +872,24 @@ export default class Shop extends React.Component {
                 </View>
               </View>
               <PrimaryButton
-                // onPress={() => this.props.navigation.navigate("")}
+                onPress={() => {
+                  GLOBAL.cart.setState({
+                    cart: [
+                      ...this.state.cart,
+                      {
+                        id: GLOBAL.cart.state.selectedItem.id,
+                        name: GLOBAL.cart.state.selectedItem.name,
+                        tag: GLOBAL.cart.state.selectedItem.tag,
+                        price: GLOBAL.cart.state.selectedItem.price,
+                        image: require("../images/restaurants/15.jpg"),
+                        qty: this.state.qtyFood,
+                        typeOrSize: this.state.selectedTypeIndex,
+                        buyersRequest: this.state.buyersRequest,
+                        ifFavorite: this.state.favourite
+                      },
+                    ],
+                  });
+                }}
                 text="Add to cart"
               />
             </View>

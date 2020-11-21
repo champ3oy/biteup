@@ -8,13 +8,14 @@ import {
   Platform,
   NativeModules,
   TouchableOpacity,
-  Image
+  Image,
+  AsyncStorage,
+  StatusBar
 } from "react-native";
-import PrimaryButton from "../Components/PrimaryButton";
 
 const { width, height } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
-let StatusBar = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
+let Statusbar = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
 class Onboarding extends React.Component {
   constructor(props) {
@@ -33,19 +34,19 @@ class Onboarding extends React.Component {
           title: "Find Your favorite Food",
           subtitle:
             "Find your favorite foold anytime from \nour existing location easily",
-          image: require('../images/c-shipping.png'),
+          image: require("../images/c-shipping.png"),
         },
         {
           id: 2,
           title: "Hot Delivery to Home",
           subtitle: "Our delivery man deliver the food to \nyour home so fast",
-          image: require('../images/c-delivery.png'),
+          image: require("../images/c-delivery.png"),
         },
         {
           id: 3,
           title: "Receive the Great Food",
           subtitle: "You'll receive the great food within \na few minutes",
-          image: require('../images/c-delivered.png'),
+          image: require("../images/c-delivered.png"),
         },
       ],
     });
@@ -77,6 +78,7 @@ class Onboarding extends React.Component {
   _renderItem = ({ item }) => {
     return (
       <View style={styles.carousel}>
+        <StatusBar hidden={true}></StatusBar>
         <Text style={{ fontSize: 30, fontWeight: "bold", color: "#fb4e4e" }}>
           upBite
         </Text>
@@ -90,7 +92,10 @@ class Onboarding extends React.Component {
             paddingVertical: 30,
           }}
         >
-          <Image style={{width: '100%', height: '100%'}} source={item.image} />
+          <Image
+            style={{ width: "100%", height: "100%" }}
+            source={item.image}
+          />
         </View>
 
         <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -140,10 +145,17 @@ class Onboarding extends React.Component {
         <View style={styles.bottomView}>
           {this.state.carouselIndex == 2 ? (
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("LoginScreen")}
+              onPress={async () => {
+                await AsyncStorage.setItem("@skipOnboardingUPBITE", "true");
+                this.props.navigation.navigate("LoginScreen");
+              }}
               style={styles.continueButton}
             >
-              <Text style={{ color: "white", fontSize: 18, fontWeight: 'bold' }}>Get Started</Text>
+              <Text
+                style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+              >
+                Get Started
+              </Text>
             </TouchableOpacity>
           ) : (
             <>
@@ -154,7 +166,11 @@ class Onboarding extends React.Component {
                 }}
                 style={styles.nextButton}
               >
-                <Text style={{ color: "white", fontSize: 18, fontWeight: 'bold' }}>Next</Text>
+                <Text
+                  style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+                >
+                  Next
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -167,7 +183,7 @@ class Onboarding extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: "white",
   },
   bottomView: {
     width: width,
@@ -205,7 +221,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   carousel: {
-    paddingTop: StatusBar,
+    paddingTop: Statusbar,
     height: height - height / 6,
     justifyContent: "space-evenly",
     alignItems: "center",

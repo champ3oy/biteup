@@ -11,97 +11,60 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import Rate from "../Components/Rating";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
 let StatusBar = Platform.OS === "ios" ? 20 : StatusBarManager.HEIGHT;
 
-export default class ScrollScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    let popularData = [
-      {
-        id: 1,
-        image: require("../images/restaurants/15.jpg"),
-        name: "Mc Donald's - Accra",
-        tag: "Western cuisine, Fast Food, burger",
-        rate: 4,
-        avgDeliveryTime: 30,
-      },
-      {
-        id: 2,
-        image: require("../images/restaurants/16.jpg"),
-        name: "KFC - Accra",
-        tag: "French fries & Chicken, Fast Food, burger",
-        rate: 4,
-        avgDeliveryTime: 30,
-      },
-    ];
-    return (
-      <View style={styles.container}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 20,
-            marginTop: 10,
-            paddingHorizontal: 20,
-          }}
-        >
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Text
-              style={{ fontWeight: "bold", fontSize: 18, color: "#fb4e4e" }}
-            >
-              Featured
-            </Text>
-            <View
-              style={{
-                width: 30,
-                height: 4,
-                backgroundColor: "#fb4e4e",
-                borderRadius: 10,
-                marginTop: 5,
-              }}
-            ></View>
-          </View>
-          <View>
-            <Text
-              style={{ fontWeight: "bold", fontSize: 18, color: "#52575c" }}
-            >
-              Popular
-            </Text>
-          </View>
-          <View>
-            <Text
-              style={{ fontWeight: "bold", fontSize: 18, color: "#52575c" }}
-            >
-              Trending
-            </Text>
-          </View>
+export default function ScrollScreen(props) {
+  let data = props.route.params.items;
+  return (
+    <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: 20,
+          marginTop: 10,
+          paddingHorizontal: 20,
+        }}
+      >
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontWeight: "bold", fontSize: 18, color: "#fb4e4e" }}>
+            {data.name}
+          </Text>
+          <View
+            style={{
+              width: 30,
+              height: 4,
+              backgroundColor: "#fb4e4e",
+              borderRadius: 10,
+              marginTop: 5,
+            }}
+          ></View>
         </View>
-        <View
-          style={{
-            backgroundColor: "white",
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            width: width,
-            flex: 1,
-            padding: 17,
-          }}
-        >
-          <SafeAreaView>
+      </View>
+      <View
+        style={{
+          backgroundColor: "white",
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          width: width,
+          flex: 1,
+          padding: 17,
+        }}
+      >
+        <SafeAreaView>
+          {data.data ? (
             <FlatList
               vertical={true}
               showsHorizontalScrollIndicator={false}
-              data={popularData}
+              data={data.data}
               renderItem={({ item }) => (
-                <View
+                <TouchableOpacity
+                  onPress={(item) => props.navigation.navigate("Shop", item)}
                   style={{
                     width: width - 100,
                     backgroundColor: "white",
@@ -133,7 +96,7 @@ export default class ScrollScreen extends React.Component {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         marginTop: 15,
-                        width: width - 155
+                        width: width - 155,
                       }}
                     >
                       <Rate rate={3} />
@@ -159,15 +122,27 @@ export default class ScrollScreen extends React.Component {
                       </View>
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               )}
               keyExtractor={(item) => item.id}
             />
-          </SafeAreaView>
-        </View>
+          ) : (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "gray", fontWeight: "bold" }}>
+                No results found
+              </Text>
+            </View>
+          )}
+        </SafeAreaView>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

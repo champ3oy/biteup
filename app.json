@@ -12,6 +12,9 @@
     ],
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "com.selorm.expotemplatebare"
+    }
   }
 }
